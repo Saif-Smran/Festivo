@@ -15,6 +15,14 @@ $currentPath = str_replace('\\', '/', $currentPath);
 $isHome = ($currentPath === '/Festivo/' || $currentPath === '/Festivo/index.php');
 $isEvents = str_ends_with($currentPath, '/events.php');
 $isAbout = str_ends_with($currentPath, '/about.php');
+// Prefer user-provided PNG assets when available; fallback to SVGs in assets/
+$logoUrl = $baseUrl.'assets/logo.svg';
+if (file_exists(__DIR__.'/logo.png')) { $logoUrl = $baseUrl.'logo.png'; }
+elseif (file_exists(__DIR__.'/assets/logo.png')) { $logoUrl = $baseUrl.'assets/logo.png'; }
+
+$faviconUrl = $baseUrl.'assets/favicon.svg';
+if (file_exists(__DIR__.'/favicon.png')) { $faviconUrl = $baseUrl.'favicon.png'; }
+elseif (file_exists(__DIR__.'/assets/favicon.png')) { $faviconUrl = $baseUrl.'assets/favicon.png'; }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +30,14 @@ $isAbout = str_ends_with($currentPath, '/about.php');
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Festivo</title>
+        <title>Festivo</title>
+        <meta name="theme-color" content="#0b1220" />
+        <meta property="og:site_name" content="Festivo" />
+        <meta property="og:type" content="website" />
+        <link rel="icon" href="<?php echo htmlspecialchars($faviconUrl, ENT_QUOTES); ?>" />
+        <?php if ($faviconUrl !== $baseUrl.'assets/favicon.svg'): ?>
+            <link rel="alternate icon" type="image/svg+xml" href="<?php echo $baseUrl; ?>assets/favicon.svg" />
+        <?php endif; ?>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
@@ -147,7 +162,10 @@ $isAbout = str_ends_with($currentPath, '/about.php');
                             <span></span><span></span><span></span>
                         </button>
                     <?php endif; ?>
-                    <a href="<?php echo $baseUrl; ?>" class="text-xl font-semibold tracking-wide brand-gradient select-none">Festivo</a>
+                    <a href="<?php echo $baseUrl; ?>" class="flex items-center gap-2 select-none" aria-label="Festivo Home">
+                        <img src="<?php echo htmlspecialchars($logoUrl, ENT_QUOTES); ?>" alt="Festivo" class="h-8 w-auto" />
+                        <span class="text-xl font-semibold tracking-wide brand-gradient">Festivo</span>
+                    </a>
                 </div>
                 <div id="navLinks" class="nav-underline hidden md:flex items-center justify-center gap-10 <?php echo $loggedIn ? '' : 'mobile-hide'; ?>">
                     <a href="<?php echo $baseUrl; ?>" class="<?php echo $isHome ? 'active font-medium text-white' : 'text-slate-200'; ?>">Home</a>
